@@ -1,94 +1,107 @@
 import React, { useState } from 'react';
-import './Home.css';  // Custom CSS for styling
+import './Home.css';
 
 const Home = () => {
   const [storyPrompt, setStoryPrompt] = useState('');
   const [wordCount, setWordCount] = useState('');
   const [genre, setGenre] = useState('');
-  const [generatedStory, setGeneratedStory] = useState('');  // State for storing the generated story
-  const [audioUrl, setAudioUrl] = useState(null); // State for storing audio URL
-
+  const [generatedStory, setGeneratedStory] = useState([]);
+  const [audioUrl, setAudioUrl] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  // Function to generate story
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent default form submission behavior
+    e.preventDefault();
     if (!storyPrompt || !wordCount || !genre) {
       alert('Please fill out all fields.');
       return;
     }
 
-    // Format the input data according to your specified format
     const inputData = `Generate a ${genre} story about ${storyPrompt} in ${wordCount} words. Only output the story and don't include instructions.`;
 
+    setLoading(true);
+
     try {
-      const response = await fetch("https://2fd9-34-126-156-31.ngrok-free.app/", {
+      const response = await fetch("https://8fc1-34-82-10-23.ngrok-free.app", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
         },
-        body: JSON.stringify({ input: inputData }), // Send formatted input
+        body: JSON.stringify({ input: inputData }),
       });
 
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        throw new Error("Failed to generate the story");
       }
 
       const data = await response.json();
-      console.log(data.story); // Handle the response data as needed
-      setGeneratedStory(data.story);  // Set the generated story
+      setGeneratedStory((prevStory) => [
+        ...prevStory,
+        { prompt: inputData, story: data },
+      ]);
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error generating story:", error);
+      alert('An error occurred while generating the story. Please try again.');
+    } finally {
+      setLoading(false);
+      setStoryPrompt('');
+      setWordCount('');
+      setGenre('');
     }
   };
 
-  const playStoryReadout = async () => {
-    if (!generatedStory) {
+  /// Function to play story using Web Speech API
+  const playStoryReadout = () => {
+    if (generatedStory.length === 0 || !generatedStory[generatedStory.length - 1].story) {
       alert('No story has been generated yet.');
       return;
     }
 
-    try {
-      const response = await fetch("https://e1d9-34-126-156-31.ngrok-free.app/readout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ text: generatedStory }), // Send generated story
-      });
+    const lastStory = generatedStory[generatedStory.length - 1].story;
+    const textForAudio = lastStory.map(scene => scene.scene).join(' ');
 
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
+    // Initialize the SpeechSynthesis API
+    const utterance = new SpeechSynthesisUtterance(textForAudio);
 
-      const data = await response.json();
-      setAudioUrl(data.audioUrl);  // Set the audio URL from the response
-    } catch (error) {
-      console.error("Error:", error);
-    }
+    // Optional: Set the language and voice properties
+    utterance.lang = 'en-US'; // English language
+    utterance.rate = 1; // Speed of speech (1 is normal)
+    utterance.pitch = 1; // Pitch of the voice (1 is normal)
+
+    // Speak the text
+    speechSynthesis.speak(utterance);
+
+    // Track if it's currently speaking
+    utterance.onstart = () => {
+      setIsSpeaking(true);
+    };
+
+    // Reset the flag when done speaking
+    utterance.onend = () => {
+      setIsSpeaking(false);
+    };
+  };
+
+  // Function to stop speech synthesis (if needed)
+  const stopStoryReadout = () => {
+    speechSynthesis.cancel(); // Stops any ongoing speech
+    setIsSpeaking(false);
   };
 
   return (
     <div className="page-container">
-      <div className="header">
-        <h1>Katha-Vaachak</h1>
-      </div>
-
-      <div className="bottom-section">
-        <form onSubmit={handleSubmit} className="form-container">
-          <textarea
-            className="story-input"
-            value={storyPrompt}
-            onChange={(e) => setStoryPrompt(e.target.value)}
-            placeholder="Enter your story prompt here..."
-          />
-
-          <div className="input-group">
-            <label htmlFor="genre" id="generelabel">Genre</label>
-            <select
-              id="genre"
-              value={genre}
-              onChange={(e) => setGenre(e.target.value)}
-              className="dropdown"
-            >
-              <option value="">Genre</option>
+      <div className="input-container">
+        <input
+          type="text"
+          placeholder="Enter your story prompt here..."
+          value={storyPrompt}
+          onChange={(e) => setStoryPrompt(e.target.value)}
+          className="prompt-input"
+        />
+        <div className="controls">
+          <select onChange={(e) => setGenre(e.target.value)} className="genre-select">
+          <option value="">Genre</option>
               <option value="horror">Horror</option>
               <option value="moral">Moral</option>
               <option value="folk-tales">Folk Tales</option>
@@ -98,38 +111,51 @@ const Home = () => {
               <option value="fantasy">Fantasy</option>
               <option value="adventureous">Adventureous</option>
               <option value="Romantic">Romantic</option>
-            </select>
-          </div>
-
-          <div className="input-group">
-            <label htmlFor="wordCount" id="lengthlabel">Length</label>
-            <input
-              type="number"
-              id="wordCount"
-              value={wordCount}
-              onChange={(e) => setWordCount(e.target.value)}
-              placeholder="Word Count"
-              min="100"
-              max="10000"
-              className="word-input"
-            />
-          </div>
-
-          <div className="button-group">
-            <button type="submit" className="submit-btn">Generate Story</button>
-            <button type="button" className="play-readout-btn" onClick={playStoryReadout}>Play Readout</button>
-          </div>
-
-          {audioUrl && (
-            <div className="audio-player">
-              <audio controls>
-                <source src={audioUrl} type="audio/mpeg" />
-                Your browser does not support the audio element.
-              </audio>
-            </div>
-          )}
-        </form>
+          </select>
+          <input
+            type="number"
+            placeholder="Word Count"
+            value={wordCount}
+            onChange={(e) => setWordCount(e.target.value)}
+            className="word-count-input"
+          />
+          <button onClick={handleSubmit} className="generate-button">
+            {loading ? 'Generating...' : 'Generate Story'}
+          </button>
+        </div>
       </div>
+
+      {/* Story Display Container */}
+      {generatedStory.length > 0 && (
+        <div className="story-display-container">
+          {generatedStory.map((story, index) => (
+            <div key={index} className="story-bubble">
+              <h2>Generated Story</h2>
+              <div className="story-content">
+                {story.story.map((scene, sceneIndex) => (
+                  <div key={sceneIndex} className="scene">
+                    <p>{scene.scene}</p>
+                    {scene.image && (
+                      <img
+                        src={`data:image/png;base64,${scene.image}`}
+                        alt={`Scene ${sceneIndex + 1}`}
+                        className="scene-image"
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Audio Button */}
+      {generatedStory.length > 0 && (
+        <button onClick={playStoryReadout} className="audio-button" disabled={isSpeaking}>
+          {isSpeaking ? 'Stop Audio' : 'Play Audio Readout'}
+        </button>
+      )}
     </div>
   );
 };

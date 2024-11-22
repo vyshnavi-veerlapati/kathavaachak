@@ -1,112 +1,111 @@
-body {
-  background-image: url('C:/Users/vyshnavi/project2/project2mern/kathavachak/public/images/background5.jpeg');
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  height: 100vh;
-  flex-direction: column;
+body{
+  background: #f8e9d2;
 }
-
 .page-container {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  height: 100vh;
-}
-
-.header {
-  padding: 1rem;
-}
-
-.header h1 {
-  font-family: 'Great Vibes', cursive;
-  font-size: 5rem;
-  font-weight: bold;
-  color: #743a06;
-  text-align: center;
-}
-
-.bottom-section {
-  display: flex;
-  justify-content: center;
   align-items: center;
-  padding: 1rem;
-  position: absolute;
-  bottom: 0;
+  padding: 20px;
+  background: #f8e9d2;
+  
+}
+
+.input-container {
+  width: 100%;
+  max-width: 800px;
+  margin-bottom: 20px;
+ 
+}
+.controls{
+  align-items: center;
+}
+.prompt-input, .word-count-input, .genre-select {
+  font-family: 'Great Vibes', cursive;
+  width: 80%;
+  padding: 10px;
+  margin: 10px 0;
+  font-size: 18px;
+  box-shadow: none;
+  
+}
+.prompt-input{
+  width: 100%;
+  padding: 20px;
+  border-radius:30px;
+  border-color:#823c03;
+  border:3px solid #823c03;
+}
+.genre-select{
+  width:25%;
+  height:55px;
+  border-radius: 13px;
+  border:2px solid #823c03;
+}
+.word-count-input{
+  width:22%;
+  height:27px;
+  border-radius: 13px;
+  border-color:#874104;
+  border:2px solid #823c03;
+}
+.controls {
+  display: flex;
+  flex-direction: column;
   width: 100%;
 }
-
-.form-container {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
+.generate-button:hover{
+  background-color:#874104;
 }
 
-#generelabel,
-#lengthlabel {
-  font-size: 2rem;
+.generate-button, .audio-button {
   font-family: 'Great Vibes', cursive;
-  color: #333;
-}
-
-.story-input {
-  font-family: 'Great Vibes', cursive;
-  width: 900px;
-  height: 50px;
+  width: 30%;
+  height: 55px;
   padding: 10px;
-  font-size: 1.3rem;
-  border: 5px solid #555252;
-  border-radius: 45px;
-  resize: none;
-}
-
-.input-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.dropdown,
-.word-input {
-  font-family: 'Great Vibes', cursive;
-  width: 130px;
-  padding: 10px;
-  font-size: 1.2rem;
-  border: 1px solid #3b3a3a;
-  border-radius: 5px;
-  margin-top: 0.5rem;
-}
-
-/* Styling for both Generate Story and Play Readout buttons */
-.submit-btn,
-.play-readout-btn {
-  font-family: 'Great Vibes', cursive;
-  background-color: #bb6112;
-  height: 60px;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 20px;
-  font-size: 1.2rem;
+  color:#ffffff;
+  border-radius:15px;
+  background-color:#bb6112;
+  font-size: 18px;
+  margin: 10px 0;
+  border:2px solid #823c03;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  width: 200px; /* Ensure consistent button size */
-  margin-top: 1rem; /* Add space above the buttons */
 }
 
-.submit-btn:hover,
-.play-readout-btn:hover {
-  background-color: #743a06;
-}
-
-.button-group {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-}
-
-.story-display {
+.story-display-container {
+  font-family: 'Great Vibes', cursive;
+  width: 100%;
+  max-width: 900px;
+  padding: 20px;
+  background-color: #f8e9d2;
+  border-radius: 10px;
   margin-top: 20px;
-  font-size: 1.5rem;
+}
+
+.story-bubble {
+  padding: 20px;
+  background-color: #f8e9d2;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.story-content {
+  font-family: 'Great Vibes', cursive;
+  padding: 10px;
+}
+
+.scene {
+  margin-bottom: 10px;
+}
+
+.scene-image {
+  width: 100%;
+  height: auto;
+  margin-top: 10px;
+}
+
+.audio-player {
+  margin-top: 20px;
+  width: 100%;
 }

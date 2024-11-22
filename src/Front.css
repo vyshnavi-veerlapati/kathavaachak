@@ -1,5 +1,5 @@
 /* General page styling */
-body {
+.app-container{
     background-image: url('C:/Users/vyshnavi/project2/project2mern/kathavachak/public/images/background5.jpeg'); /* Adjust path */
     background-repeat: no-repeat;
     background-size: cover;
