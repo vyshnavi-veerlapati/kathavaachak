@@ -22,7 +22,7 @@ const Home = () => {
     setLoading(true);
 
     try {
-      const response = await fetch("https://8fc1-34-82-10-23.ngrok-free.app", {
+      const response = await fetch("https://b1ff-35-197-115-215.ngrok-free.app", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -61,13 +61,20 @@ const Home = () => {
     const lastStory = generatedStory[generatedStory.length - 1].story;
     const textForAudio = lastStory.map(scene => scene.scene).join(' ');
 
+    const voices = speechSynthesis.getVoices();
+    const indianFemaleEnglishVoice = voices.find(voice => voice.name === 'Google UK English Female');
+
     // Initialize the SpeechSynthesis API
     const utterance = new SpeechSynthesisUtterance(textForAudio);
 
+    if (indianFemaleEnglishVoice) {
+      utterance.voice = indianFemaleEnglishVoice;
+    }
+
     // Optional: Set the language and voice properties
-    utterance.lang = 'en-US'; // English language
+    utterance.lang = 'en-IN'; // English language
     utterance.rate = 1; // Speed of speech (1 is normal)
-    utterance.pitch = 1; // Pitch of the voice (1 is normal)
+    utterance.pitch = 1.2; // Pitch of the voice (1 is normal)
 
     // Speak the text
     speechSynthesis.speak(utterance);
